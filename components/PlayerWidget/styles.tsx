@@ -42,6 +42,10 @@ const styles = StyleSheet.create({
     color: "lightgray",
     fontSize: 18,
   },
+  progress: {
+    height: 3,
+    backgroundColor: "#bcbcbc",
+  },
 });
 
 export default styles;
