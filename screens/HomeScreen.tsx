@@ -1,22 +1,38 @@
-import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, FlatList } from "react-native";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import AlbumCategory from "../components/AlbumCategory";
 
-import { RootTabScreenProps } from "../types";
+import { API, graphqlOperation } from "aws-amplify";
+import { listAlbumCategories } from "../src/graphql/queries";
 import albumCategories from "../assets/dummyData/albumCategories";
-import { FlatList } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
+
+const [categories, setCategories] = useState([])
+
+  useEffect(() => {
+    const fetchAlbumCategories = async () => {
+      try {
+        const data = await API.graphql(graphqlOperation(listAlbumCategories));
+        setCategories(data.data.listAlbumCategories.items)
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchAlbumCategories();
+  }, []);
+
   return (
     <View style={styles.container}>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={albumCategories}
+        data={categories}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <AlbumCategory albums={item.albums} title={item.title} />
+          <AlbumCategory albums={item.albums.items} title={item.title} />
         )}
       />
     </View>
